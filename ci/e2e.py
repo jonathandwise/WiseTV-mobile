@@ -264,7 +264,7 @@ def run():
             sh(f"adb shell input tap {int(cw * 0.82)} {int(ch * 0.45)}")
             time.sleep(0.8)
         tap(desc="Options", timeout=3)
-        if find("Picture size", timeout=4):
+        if find("Audio", timeout=4) or find("Picture size", timeout=1):
             opened = True
             break
     check("player options open", opened)

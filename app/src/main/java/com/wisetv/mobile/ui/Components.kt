@@ -197,7 +197,7 @@ data class Choice(val label: String, val selected: Boolean = false, val danger: 
 /** A bottom sheet with a title and a list of choices; picking one closes it. */
 @Composable
 fun ChoiceSheet(title: String?, choices: List<Choice>, onDismiss: () -> Unit, subtitle: String? = null, header: (@Composable ColumnScope.() -> Unit)? = null) {
-    val state = rememberModalBottomSheetState(skipPartiallyExpanded = choices.size > 7)
+    val state = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = state, containerColor = Pal.Panel) {
         Column(Modifier.fillMaxWidth().navigationBarsPadding()) {
             if (title != null) {
