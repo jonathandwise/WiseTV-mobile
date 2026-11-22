@@ -258,12 +258,18 @@ def run():
         time.sleep(1.5)
         shot("channel-panel")
         key(BACK)
-    if not find(desc="Options", timeout=2):
-        sh(f"adb shell input tap {int(cw * 0.82)} {int(ch * 0.45)}")
-        time.sleep(1)
-    if tap(desc="Options", timeout=5):
-        time.sleep(1.5)
-        shot("player-options")
+    opened = False
+    for _ in range(3):
+        if not find(desc="Options", timeout=2):
+            sh(f"adb shell input tap {int(cw * 0.82)} {int(ch * 0.45)}")
+            time.sleep(0.8)
+        tap(desc="Options", timeout=3)
+        if find("Picture size", timeout=4):
+            opened = True
+            break
+    check("player options open", opened)
+    shot("player-options")
+    if opened:
         key(BACK)
     check("video decoder is logged", any("video decoder" in l for l in app_log()))
 

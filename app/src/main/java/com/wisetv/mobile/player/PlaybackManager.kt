@@ -260,6 +260,25 @@ class PlaybackManager(private val ctx: Context, private val g: AppGraph) {
         autoFixAt = System.currentTimeMillis()
     }
 
+    /**
+     * The video decoder keeps failing on this stream (some phone decoders give up on certain
+     * channels): switch to the software decoder, as for a frozen picture. Returns true when a fix
+     * was applied (the stream restarts with it).
+     */
+    private fun onDecoderFailing(): Boolean {
+        val done = fixKey?.let { tried.getOrPut(it) { mutableSetOf(activeFix) } } ?: mutableSetOf(activeFix)
+        val next = listOf(FIX_SOFTWARE, FIX_READING or FIX_SOFTWARE).firstOrNull { it !in done && it != activeFix }
+        L.i("video decoder failing decoder=$videoDecoderName fix=$activeFix -> ${next ?: "none left"}")
+        if (next == null) return false
+        lastAutoFix = System.currentTimeMillis()
+        events.tryEmit(Event.Notice("The video decoder stopped \u2014 trying the software video decoder"))
+        setFix(next, auto = true)
+        autoFixAt = System.currentTimeMillis()
+        return true
+    }
+
+    private var decoderErrors = 0
+
     private val stallCheck = Runnable {
         val src = nowPlaying.value
         if (src is Source.Live && player.playWhenReady && player.playbackState == Player.STATE_BUFFERING) {
@@ -623,6 +642,7 @@ class PlaybackManager(private val ctx: Context, private val g: AppGraph) {
         activeFix = fixKey?.let { fixes[it] } ?: playlistKey(nowPlaying.value)?.let { fixes[it] } ?: 0
         if (!isRetry) {
             connCheckDone = false
+            decoderErrors = 0
             connBlocked = false
             autoFixAt = 0
             fixKey?.let { tried[it] = mutableSetOf(activeFix) }
@@ -697,8 +717,19 @@ class PlaybackManager(private val ctx: Context, private val g: AppGraph) {
             start(url, currentUa, 0, currentLive, forceHls = true, isRetry = true)
             return
         }
+        val decoderError = error.errorCode == PlaybackException.ERROR_CODE_DECODING_FAILED ||
+            error.errorCode == PlaybackException.ERROR_CODE_DECODER_INIT_FAILED
+        if (decoderError && ++decoderErrors >= 2) {
+            decoderErrors = 0
+            if (onDecoderFailing()) return
+        }
         if (src is Source.Live) {
             scheduleRetry(src)
+            return
+        }
+        if (decoderError && decoderErrors == 1) {
+            // Once more from the same spot before giving up on a movie or episode.
+            start(url, currentUa, player.currentPosition, live = false, forceHls = hlsActive, isRetry = true)
             return
         }
         events.tryEmit(Event.Error(friendly(error)))
