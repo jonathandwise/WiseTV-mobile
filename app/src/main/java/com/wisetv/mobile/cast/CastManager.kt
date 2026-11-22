@@ -36,7 +36,6 @@ class CastOptionsProvider : OptionsProvider {
             .build()
         val media = CastMediaOptions.Builder()
             .setNotificationOptions(notification)
-            .setExpandedControllerActivityClassName(null)
             .build()
         return CastOptions.Builder()
             .setReceiverApplicationId(CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID)
