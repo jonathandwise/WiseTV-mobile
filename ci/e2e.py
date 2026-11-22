@@ -127,8 +127,20 @@ def find(text=None, desc=None, exact=True, timeout=15, where=None):
     return None
 
 
-def tap(text=None, desc=None, exact=True, timeout=15, where=None, long=False):
-    n = find(text, desc, exact, timeout, where)
+def scroll_to(text=None, desc=None, exact=True, tries=6):
+    """Scrolls the screen up until the text is visible."""
+    w, h = screen_size()
+    for _ in range(tries):
+        n = find(text, desc, exact, 2)
+        if n and n["y"] < h * 0.78:
+            return n
+        sh(f"adb shell input swipe {w // 2} {int(h * 0.7)} {w // 2} {int(h * 0.35)} 400")
+        time.sleep(1)
+    return find(text, desc, exact, 2)
+
+
+def tap(text=None, desc=None, exact=True, timeout=15, where=None, long=False, scroll=False):
+    n = scroll_to(text, desc, exact) if scroll else find(text, desc, exact, timeout, where)
     if not n:
         say(f"not found on screen: {text or desc}")
         return False
@@ -143,7 +155,7 @@ def tap(text=None, desc=None, exact=True, timeout=15, where=None, long=False):
 def type_into(label, value):
     if not tap(label, exact=True):
         return False
-    sh(f"adb shell input text '{value}'")
+    sh(f"adb shell input text '{value.replace(' ', '%s')}'")
     time.sleep(0.6)
     return True
 
@@ -237,17 +249,18 @@ def run():
     shot("player-hls-channel")
 
     step("controls: channel list and options")
-    sh(f"adb shell input tap {cw // 2} {ch // 2}")
+    sh(f"adb shell input tap {int(cw * 0.82)} {int(ch * 0.45)}")
     time.sleep(1)
     if not find("Channels", timeout=3):
-        sh(f"adb shell input tap {cw // 2} {ch // 2}")
+        sh(f"adb shell input tap {int(cw * 0.82)} {int(ch * 0.45)}")
     shot("player-controls-2")
     if tap("Channels", timeout=5):
         time.sleep(1.5)
         shot("channel-panel")
         key(BACK)
-    sh(f"adb shell input tap {cw // 2} {ch // 2}")
-    time.sleep(1)
+    if not find(desc="Options", timeout=2):
+        sh(f"adb shell input tap {int(cw * 0.82)} {int(ch * 0.45)}")
+        time.sleep(1)
     if tap(desc="Options", timeout=5):
         time.sleep(1.5)
         shot("player-options")
@@ -341,7 +354,7 @@ def run():
     time.sleep(2)
     shot("settings")
     m = mark()
-    if tap("Link your Plex account", timeout=8):
+    if tap("Link your Plex account", scroll=True):
         time.sleep(2)
         shot("plex-link")
         check("Plex links with a code", wait_log(r"plex linked", 30, m))
@@ -363,7 +376,7 @@ def run():
         say(f"control error: {e}")
     tap("Settings", where=lambda nd: nd["y"] > h * 0.85)
     time.sleep(1)
-    tap("WiseTV mobile", exact=False)
+    tap("WiseTV mobile", exact=False, scroll=True)
     check("a new version is found and downloaded", wait_log(r"update ready 9\.9\.9", 60, m))
     time.sleep(4)
     shot("update-offer")

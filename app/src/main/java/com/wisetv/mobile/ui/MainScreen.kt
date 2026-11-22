@@ -70,6 +70,7 @@ private fun Section.icon(): ImageVector = when (this) {
 fun MainScreen(app: AppState, section: Section) {
     val holder = rememberSaveableStateHolder()
     val now by app.g.playback.nowPlaying.collectAsState()
+    LaunchedEffect(section) { com.wisetv.mobile.L.i("screen Main(section=$section)") }
     Column(Modifier.fillMaxSize().background(Pal.Bg)) {
         Box(Modifier.weight(1f).fillMaxWidth().statusBarsPadding()) {
             holder.SaveableStateProvider(section.name) {
