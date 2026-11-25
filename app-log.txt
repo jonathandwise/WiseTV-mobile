@@ -1,0 +1,92 @@
+11-25 06:09:09.250 I/WiseTV  ( 2824): media session started
+11-25 06:09:09.955 I/WiseTV  ( 2824): update none (installed 10001, latest null)
+11-25 06:09:09.967 I/WiseTV  ( 2824): screen Main(section=LIVE)
+11-25 06:09:09.968 I/WiseTV  ( 2824): video off (background audio)
+11-25 06:09:10.332 I/WiseTV  ( 2824): update none (installed 10001, latest null)
+11-25 06:09:10.503 I/WiseTV  ( 2824): screen Main(section=LIVE)
+11-25 06:09:11.483 I/WiseTV  ( 2824): screen AddPlaylist
+11-25 06:10:04.741 I/WiseTV  ( 2824): sync done playlist=1
+11-25 06:10:04.874 I/WiseTV  ( 2824): screen ManageGroups(playlistId=1, kind=live, firstRun=true)
+11-25 06:10:11.316 I/WiseTV  ( 2824): screen Main(section=LIVE)
+11-25 06:10:11.349 I/WiseTV  ( 2824): screen Main(section=LIVE)
+11-25 06:10:11.812 I/WiseTV  ( 2824): epg done playlist=1 programmes=649
+11-25 06:10:20.779 I/WiseTV  ( 2824): tune channel=News One HD
+11-25 06:10:20.840 I/WiseTV  ( 2824): player state=BUFFERING live=true size=0x0
+11-25 06:10:21.022 I/WiseTV  ( 2824): video on
+11-25 06:10:21.925 I/WiseTV  ( 2824): video decoder c2.goldfish.h264.decoder
+11-25 06:10:21.925 I/WiseTV  ( 2824): video format video/avc avc1.42C01E 854x480 -1.0fps
+11-25 06:10:22.042 I/WiseTV  ( 2824): audio decoder c2.android.aac.decoder
+11-25 06:10:22.042 I/WiseTV  ( 2824): audio format audio/mp4a-latm 1ch 48000Hz passthrough=false
+11-25 06:10:22.043 I/WiseTV  ( 2824): player state=READY live=true size=0x0
+11-25 06:10:28.202 I/WiseTV  ( 2824): video stalled decoder=c2.goldfish.h264.decoder queued=26 out=13 fix=0 -> 1
+11-25 06:10:28.208 I/WiseTV  ( 2824): video fix set c7xhq7d fix=1
+11-25 06:10:28.307 I/WiseTV  ( 2824): player state=IDLE live=true size=854x480
+11-25 06:10:28.309 I/WiseTV  ( 2824): video fix in use fix=1
+11-25 06:10:28.341 I/WiseTV  ( 2824): player state=BUFFERING live=true size=854x480
+11-25 06:10:28.762 I/WiseTV  ( 2824): video decoder c2.goldfish.h264.decoder
+11-25 06:10:28.766 I/WiseTV  ( 2824): video format video/avc avc1.42C01E 854x480 -1.0fps
+11-25 06:10:28.856 I/WiseTV  ( 2824): audio decoder c2.android.aac.decoder
+11-25 06:10:28.856 I/WiseTV  ( 2824): audio format audio/mp4a-latm 1ch 48000Hz passthrough=false
+11-25 06:10:29.031 I/WiseTV  ( 2824): player state=READY live=true size=854x480
+11-25 06:10:33.524 I/WiseTV  ( 2824): screen Player
+11-25 06:10:48.641 I/WiseTV  ( 2824): video fix learned playlist=1 fix=1
+11-25 06:10:51.780 I/WiseTV  ( 2824): tune channel=World Report (HLS)
+11-25 06:10:51.780 I/WiseTV  ( 2824): video fix in use fix=1
+11-25 06:10:51.811 I/WiseTV  ( 2824): player state=BUFFERING live=true size=854x480
+11-25 06:10:51.833 I/WiseTV  ( 2824): dropped 1 video frames in 22813ms
+11-25 06:10:52.676 I/WiseTV  ( 2824): player error=ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED cause=UnrecognizedInputFormatException: None of the available extractors (TsExtractor, FlvExtractor, FlacExtractor, WavExtractor, FragmentedMp4Extractor, Mp4Extractor, AmrExtractor, PsExtractor, OggExtractor, MatroskaExtractor, AdtsExtractor, Ac3Extractor, Ac4Extractor, Mp3Extractor, AviExtractor, JpegExtractor, BmpExtractor, AvifExtractor, BmpExtractor, AvifExtractor, AvifExtractor) could read the stream. {contentIsMalformed=false, dataType=1}
+11-25 06:10:52.677 I/WiseTV  ( 2824): video fix in use fix=1
+11-25 06:10:52.687 I/WiseTV  ( 2824): player state=IDLE live=true size=0x0
+11-25 06:10:52.694 I/WiseTV  ( 2824): player state=BUFFERING live=true size=0x0
+11-25 06:10:53.282 I/WiseTV  ( 2824): video decoder c2.goldfish.h264.decoder
+11-25 06:10:53.282 I/WiseTV  ( 2824): video format video/avc avc1.42C01E 854x480 -1.0fps
+11-25 06:10:53.343 I/WiseTV  ( 2824): audio decoder c2.android.aac.decoder
+11-25 06:10:53.343 I/WiseTV  ( 2824): audio format audio/mp4a-latm 1ch 48000Hz passthrough=false
+11-25 06:10:53.462 I/WiseTV  ( 2824): player state=READY live=true size=854x480
+11-25 06:11:39.801 I/WiseTV  ( 2824): video off (background audio)
+11-25 06:11:39.900 I/WiseTV  ( 2824): dropped 14 video frames in 46396ms
+11-25 06:11:50.041 I/WiseTV  ( 2824): video on
+11-25 06:11:51.134 I/WiseTV  ( 2824): video decoder c2.goldfish.h264.decoder
+11-25 06:11:51.135 I/WiseTV  ( 2824): video format video/avc avc1.42C01E 854x480 -1.0fps
+11-25 06:11:51.177 I/WiseTV  ( 2824): player state=BUFFERING live=true size=0x0
+11-25 06:11:52.001 I/WiseTV  ( 2824): player state=READY live=true size=854x480
+11-25 06:11:55.289 I/WiseTV  ( 2824): screen Main(section=LIVE)
+11-25 06:11:55.289 I/WiseTV  ( 2824): screen Main(section=LIVE)
+11-25 06:12:28.852 I/WiseTV  ( 2824): favorite Sports Arena -> true
+11-25 06:12:38.181 I/WiseTV  ( 2824): screen Main(section=MOVIES)
+11-25 06:12:39.486 I/WiseTV  ( 2824): video off (background audio)
+11-25 06:12:39.504 I/WiseTV  ( 2824): dropped 9 video frames in 47548ms
+11-25 06:12:44.902 I/WiseTV  ( 2824): vod open 101
+11-25 06:12:44.919 I/WiseTV  ( 2824): screen MovieDetail(playlistId=1, streamId=101)
+11-25 06:12:50.562 I/WiseTV  ( 2824): play kind=movie title=Test Movie 1 (2001) [] from=0s
+11-25 06:12:50.567 I/WiseTV  ( 2824): player state=BUFFERING live=false size=0x0
+11-25 06:12:50.749 I/WiseTV  ( 2824): video on
+11-25 06:12:50.803 I/WiseTV  ( 2824): screen Player
+11-25 06:12:51.568 I/WiseTV  ( 2824): video decoder c2.goldfish.h264.decoder
+11-25 06:12:51.568 I/WiseTV  ( 2824): video format video/avc avc1.42C01F 1280x720 24.0fps
+11-25 06:12:51.958 I/WiseTV  ( 2824): audio decoder c2.android.aac.decoder
+11-25 06:12:51.958 I/WiseTV  ( 2824): audio format audio/mp4a-latm 1ch 48000Hz passthrough=false
+11-25 06:12:52.368 I/WiseTV  ( 2824): player state=READY live=false size=1280x720
+11-25 06:12:58.806 I/WiseTV  ( 2824): screen MovieDetail(playlistId=1, streamId=101)
+11-25 06:13:00.105 I/WiseTV  ( 2824): video off (background audio)
+11-25 06:13:00.377 I/WiseTV  ( 2824): screen Main(section=MOVIES)
+11-25 06:13:00.377 I/WiseTV  ( 2824): screen Main(section=MOVIES)
+11-25 06:13:05.603 I/WiseTV  ( 2824): screen Main(section=SERIES)
+11-25 06:13:11.831 I/WiseTV  ( 2824): vod open 201
+11-25 06:13:11.854 I/WiseTV  ( 2824): screen SeriesDetail(playlistId=1, seriesId=201)
+11-25 06:13:16.407 I/WiseTV  ( 2824): screen Main(section=SERIES)
+11-25 06:13:16.407 I/WiseTV  ( 2824): screen Main(section=SERIES)
+11-25 06:13:19.308 I/WiseTV  ( 2824): screen Main(section=SEARCH)
+11-25 06:13:33.027 I/WiseTV  ( 2824): screen Main(section=SETTINGS)
+11-25 06:13:43.718 I/WiseTV  ( 2824): plex pin shown
+11-25 06:13:49.228 I/WiseTV  ( 2824): plex linked user=jonathan
+11-25 06:13:49.830 I/WiseTV  ( 2824): plex servers selected: Home Plex, Friend's Plex
+11-25 06:13:49.836 I/WiseTV  ( 2824): plex try http://10.0.2.2:8080/plexsrv2 local=false relay=false ok=true
+11-25 06:13:49.836 I/WiseTV  ( 2824): plex connected Friend's Plex via http://10.0.2.2:8080/plexsrv2 local=false
+11-25 06:13:50.363 I/WiseTV  ( 2824): plex try https://192-0-2-10.abc.plex.direct:32400 local=true relay=false ok=false
+11-25 06:13:50.866 I/WiseTV  ( 2824): plex try http://10.0.2.2:8080/plexsrv local=true relay=false ok=true
+11-25 06:13:50.866 I/WiseTV  ( 2824): plex connected Home Plex via http://10.0.2.2:8080/plexsrv local=true
+11-25 06:13:58.119 I/WiseTV  ( 2824): screen Main(section=MOVIES)
+11-25 06:14:12.775 I/WiseTV  ( 2824): screen Main(section=SETTINGS)
+11-25 06:14:26.524 I/WiseTV  ( 2824): update available 9.9.9
+11-25 06:14:29.119 I/WiseTV  ( 2824): update ready 9.9.9

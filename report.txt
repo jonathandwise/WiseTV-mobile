@@ -1,0 +1,31 @@
+29/29 checks passed
+
+PASS  app starts on the add-playlist screen 
+PASS  the free playlists from WiseTV for Windows are listed 
+PASS  channels, movies and series load 
+PASS  group picker opens 
+PASS  Live TV opens 
+PASS  TV guide loads (649 programmes)
+PASS  channel plays in the mini player 
+PASS  full-screen player opens 
+PASS  swiping changes channel 
+PASS  HLS channel plays 
+PASS  player options open 
+PASS  video decoder is logged 
+PASS  the picture stops in the background 
+PASS  the sound keeps playing 
+PASS  a media session is published for the notification 
+PASS  the picture comes back 
+PASS  Back returns to Live TV 
+PASS  a channel can be added to favorites 
+PASS  Movies opens 
+PASS  movie page opens 
+PASS  movie plays 
+PASS  back to Movies with the now-playing bar 
+PASS  series page opens 
+PASS  Search opens 
+PASS  search finds movies and series 
+PASS  Plex links with a code 
+PASS  Plex libraries appear among the movie categories 
+PASS  a new version is found and downloaded 
+PASS  no crash 

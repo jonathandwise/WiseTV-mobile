@@ -1,0 +1,8 @@
+06:07:11 mock IPTV server on :8080, media from /home/runner/work/_temp/media
+06:10:21 live 1: start
+06:10:28 live 1: end after 1186 KB
+06:10:28 live 1: start
+06:10:52 live 1: end after 2784 KB
+06:13:43 plex.tv pin requested
+06:14:10 control: update published
+06:14:26 update apk downloaded
