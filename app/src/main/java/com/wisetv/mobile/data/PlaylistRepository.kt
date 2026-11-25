@@ -35,8 +35,7 @@ class PlaylistRepository(
     /** Signs in to check the details, then saves the playlist. Returns its id. */
     suspend fun addXtream(name: String, server: String, user: String, pass: String, epgUrl: String = "", userAgent: String = ""): Long =
         withContext(Dispatchers.IO) {
-            val api = XtreamApi(http, server, user.trim(), pass.trim(), userAgent)
-            val auth = api.authenticate()
+            val (api, auth) = loginTryingVariants(server, user.trim(), pass.trim(), userAgent)
             addedWhileInUse = if (auth.inUse) auth.maxConnections else null
             if (auth.inUse) L.i("login ok but connections in use active=${auth.activeConnections} max=${auth.maxConnections}")
             val id = db.playlists().insert(
@@ -56,6 +55,27 @@ class PlaylistRepository(
             if (settings.activePlaylistId <= 0L) settings.activePlaylistId = id
             id
         }
+
+    /**
+     * Logs in with the address as typed; if that doesn't lead to an Xtream login at all, tries the
+     * other of http/https and the bare host (copied addresses often differ in just that).
+     * A server that answers and refuses the login isn't retried.
+     */
+    fun loginTryingVariants(server: String, user: String, pass: String, userAgent: String): Pair<XtreamApi, XtreamApi.AuthInfo> {
+        var firstError: Exception? = null
+        for (candidate in XtreamApi.addressVariants(server)) {
+            val api = XtreamApi(http, candidate, user, pass, userAgent)
+            try {
+                val auth = api.authenticate()
+                if (firstError != null) L.i("xtream login worked at another address scheme=${candidate.substringBefore(':')}")
+                return api to auth
+            } catch (e: XtreamApi.WrongAddressException) {
+                L.i("xtream login failed scheme=${candidate.substringBefore(':')} pathless=${candidate.count { it == '/' } <= 2}: ${e.message?.take(60)}")
+                if (firstError == null) firstError = e
+            }
+        }
+        throw firstError ?: IOException("Login failed. Check the server address.")
+    }
 
     /** Adds an M3U link. Xtream "get.php" links are upgraded to full Xtream logins (adds movies and series). */
     suspend fun addM3u(name: String, url: String, epgUrl: String = "", userAgent: String = ""): Long {
@@ -223,8 +243,18 @@ class PlaylistRepository(
         val vodGroups = LinkedHashSet<String>()
         var vodCount = 0
         var headerEpg = ""
-        http.api.newCall(http.request(pl.url, pl.userAgent)).execute().use { resp ->
-            if (!resp.isSuccessful) throw IOException("Playlist download failed (HTTP ${resp.code})")
+        val response = try {
+            http.api.newCall(http.request(pl.url, pl.userAgent)).execute()
+        } catch (e: IOException) {
+            throw IOException(XtreamApi.unreachableMessage(pl.url, e) + " Also check whether the link starts with http:// or https://.")
+        }
+        response.use { resp ->
+            if (!resp.isSuccessful) {
+                throw IOException(
+                    "Playlist download failed (HTTP ${resp.code})." +
+                        if (resp.code == 404) " Check the link is complete, and whether it starts with http:// or https://." else "",
+                )
+            }
             val reader = BufferedReader(InputStreamReader(Http.maybeGunzip(resp.body!!.byteStream()), Charsets.UTF_8), 64 * 1024)
             M3uParser().parse(reader, onHeader = { headerEpg = it.joinToString("\n") }) { e ->
                 when (M3uParser.classify(e.url)) {

@@ -22,6 +22,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -118,15 +120,15 @@ fun AddPlaylistScreen(app: AppState, editId: Long?, firstRun: Boolean) {
             try {
                 if (editId != null) {
                     val old = g.db.playlists().get(editId) ?: return@launch
+                    var xtreamBase = XtreamApi.normalizeServer(server)
                     if (type == PlaylistType.XTREAM) {
                         busy = "Checking your login…"
-                        val api = XtreamApi(g.http, server, user, pass, ua)
-                        withContext(Dispatchers.IO) { api.authenticate() }
+                        xtreamBase = withContext(Dispatchers.IO) { g.repo.loginTryingVariants(server, user.trim(), pass.trim(), ua) }.first.base
                     }
                     g.db.playlists().update(
                         old.copy(
                             name = name.ifBlank { old.name },
-                            url = if (type == PlaylistType.XTREAM) XtreamApi.normalizeServer(server) else m3u.trim(),
+                            url = if (type == PlaylistType.XTREAM) xtreamBase else m3u.trim(),
                             username = user.trim(),
                             password = pass.trim(),
                             epgUrl = epg.trim(),
@@ -192,11 +194,11 @@ fun AddPlaylistScreen(app: AppState, editId: Long?, firstRun: Boolean) {
             }
             Field("Playlist name (optional)", name, { name = it })
             if (type == PlaylistType.XTREAM) {
-                Field("Server address", server, { server = it }, hint = "e.g. http://example.com:8080", keyboard = KeyboardType.Uri)
+                Field("Server address", server, { server = it }, hint = "e.g. http://example.com:8080", keyboard = KeyboardType.Uri, multiline = true)
                 Field("Username", user, { user = it })
                 Field("Password", pass, { pass = it }, secret = true)
             } else {
-                Field("M3U link", m3u, { m3u = it }, hint = "http://…", keyboard = KeyboardType.Uri)
+                Field("M3U link", m3u, { m3u = it }, hint = "http://…", keyboard = KeyboardType.Uri, multiline = true)
             }
             Field(
                 "Extra TV guide (XMLTV) link (optional)",
@@ -204,6 +206,7 @@ fun AddPlaylistScreen(app: AppState, editId: Long?, firstRun: Boolean) {
                 { epg = it },
                 hint = if (type == PlaylistType.XTREAM) "Your provider's guide is used automatically" else "Used if the playlist doesn't include one",
                 keyboard = KeyboardType.Uri,
+                multiline = true,
             )
             if (editing) {
                 Field("User agent (optional)", ua, { ua = it }, hint = "Only if your provider requires one")
@@ -236,15 +239,26 @@ private fun Field(
     hint: String? = null,
     secret: Boolean = false,
     keyboard: KeyboardType = KeyboardType.Text,
+    multiline: Boolean = false,
 ) {
     OutlinedTextField(
         value = value,
-        onValueChange = onValue,
+        // Links are one line however they were pasted.
+        onValueChange = { onValue(if (multiline) it.replace("\n", "").replace("\r", "") else it) },
         label = { Text(label) },
         placeholder = if (hint != null) ({ Text(hint, color = Pal.Muted) }) else null,
-        singleLine = true,
+        trailingIcon = if (value.isNotEmpty() && !secret) ({
+            IconButton(onClick = { onValue("") }) { Icon(Icons.Filled.Clear, contentDescription = "Clear", tint = Pal.Muted) }
+        }) else null,
+        // Long links wrap onto several lines so all of them can be seen and edited.
+        singleLine = !multiline,
+        maxLines = if (multiline) 5 else 1,
         visualTransformation = if (secret) PasswordVisualTransformation() else VisualTransformation.None,
-        keyboardOptions = KeyboardOptions(keyboardType = if (secret) KeyboardType.Password else keyboard, autoCorrectEnabled = false),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = if (secret) KeyboardType.Password else keyboard,
+            autoCorrectEnabled = false,
+            imeAction = androidx.compose.ui.text.input.ImeAction.Next,
+        ),
         colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Pal.Accent, unfocusedBorderColor = Pal.Line, cursorColor = Pal.Accent, focusedLabelColor = Pal.Accent),
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),

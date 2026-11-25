@@ -210,3 +210,19 @@ class PresetsTest {
         assertTrue(p.all { it.url.startsWith("https://") && it.url.endsWith(".m3u") })
     }
 }
+
+class AddressVariantsTest {
+    @Test fun triesOtherSchemeAndBareHost() {
+        assertEquals(
+            listOf("https://line.example.ru/c", "http://line.example.ru/c", "https://line.example.ru", "http://line.example.ru"),
+            com.wisetv.mobile.data.xtream.XtreamApi.addressVariants("https://line.example.ru/c/"),
+        )
+    }
+
+    @Test fun keepsPortAndDropsDuplicates() {
+        assertEquals(
+            listOf("http://h.tv:8080", "https://h.tv:8080"),
+            com.wisetv.mobile.data.xtream.XtreamApi.addressVariants("h.tv:8080/player_api.php?username=a&password=b"),
+        )
+    }
+}

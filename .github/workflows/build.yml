@@ -178,13 +178,21 @@ jobs:
           v, apk, notes = sys.argv[1:4]
           a, b, c = (int(x) for x in v.split("."))
           text = open(notes).read().strip()
+          def notes_text(t):
+              out = ""
+              for l in t.splitlines():
+                  l = l.lstrip("-* ").strip()
+                  if len(out) + len(l) > 700:
+                      break
+                  out += ("\n" if out else "") + l
+              return out
           print(json.dumps({
               "versionCode": a * 10000 + b * 100 + c,
               "versionName": v,
               "apk": os.path.basename(apk),
               "sha256": hashlib.sha256(open(apk, "rb").read()).hexdigest(),
               "size": os.path.getsize(apk),
-              "notes": "\n".join(l.lstrip("-* ").strip() for l in text.splitlines())[:600],
+              "notes": notes_text(text),
           }, indent=2))
           PY
           cat rel/latest.json

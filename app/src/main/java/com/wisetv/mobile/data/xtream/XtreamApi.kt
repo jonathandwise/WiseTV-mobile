@@ -40,6 +40,12 @@ class XtreamApi(
     /** The provider refused because its connection limit is used up (by another app or device). */
     class ConnectionLimitException(max: Int?) : IOException(inUseMessage(max ?: 1))
 
+    /**
+     * The address didn't lead to an Xtream login at all (no answer, "not found", or not Xtream
+     * data), as opposed to the server answering and refusing it. Worth trying a variant of the address.
+     */
+    class WrongAddressException(message: String) : IOException(message)
+
     data class Episode(
         val id: String,
         val season: Int,
@@ -91,13 +97,21 @@ class XtreamApi(
     fun episodeUrl(episodeId: String, ext: String) = "$base/series/$username/$password/$episodeId.$ext"
 
     private fun open(url: String): Response {
-        val r = http.api.newCall(http.request(url, userAgent)).execute()
+        val r = try {
+            http.api.newCall(http.request(url, userAgent)).execute()
+        } catch (e: IOException) {
+            throw WrongAddressException(unreachableMessage(base, e))
+        }
         if (!r.isSuccessful) {
             val code = r.code
             r.close()
             when (code) {
                 401, 403 -> throw IOException("The server refused the login (HTTP $code). Check the username and password. $OTHER_APP_HINT")
                 429, 456, 458, 509 -> throw ConnectionLimitException(null)
+                404 -> throw WrongAddressException(
+                    "The server answered, but not as an Xtream Codes login (HTTP 404) at $base. " +
+                        "Copy the server address exactly as it is in TiviMate or on your TV, including http:// or https:// and any port such as :8080.",
+                )
                 else -> throw IOException("The server returned an error (HTTP $code).")
             }
         }
@@ -109,7 +123,7 @@ class XtreamApi(
         try {
             JsonParser.parseString(text)
         } catch (e: Exception) {
-            throw IOException("The server didn't return Xtream data. Check the server address.")
+            throw WrongAddressException("The server at $base didn't return Xtream Codes data. Check the server address (http:// or https://, and any port such as :8080).")
         }
     }
 
@@ -224,6 +238,30 @@ class XtreamApi(
     }
 
     companion object {
+        /** Plain-language explanation of a server that couldn't be reached at all. */
+        fun unreachableMessage(base: String, e: IOException): String {
+            val host = try { java.net.URI(base).host ?: base } catch (_: Exception) { base }
+            val what = when (e) {
+                is java.net.UnknownHostException -> "Couldn't find the server $host."
+                is java.net.SocketTimeoutException -> "The server $host didn't answer."
+                else -> "Couldn't connect to the server $host."
+            }
+            return "$what If it works on another device on the same Wi-Fi, the phone is probably using different internet settings: " +
+                "turn off Private DNS (Settings \u203A Network & internet \u203A Private DNS) and pause any VPN or ad blocker, then try again. " +
+                "On mobile data, your carrier may block it."
+        }
+
+        /**
+         * Versions of a server address worth trying when the one typed doesn't lead to a login:
+         * as typed, with http/https swapped, and without anything after the host and port.
+         */
+        fun addressVariants(input: String): List<String> {
+            val first = normalizeServer(input)
+            fun swap(u: String) = if (u.startsWith("https://", true)) "http://" + u.substring(8) else "https://" + u.substringAfter("://")
+            val root = Regex("""^(https?://[^/?#]+)""", RegexOption.IGNORE_CASE).find(first)?.groupValues?.get(1) ?: first
+            return listOf(first, swap(first), root, swap(root)).distinct()
+        }
+
         const val OTHER_APP_HINT = "If this login works in another app or device (WiseTV on your TV, TiviMate), stop watching there first: your provider may allow only one connection at a time."
 
         /** What to tell the user when the subscription's connections are all taken. */
